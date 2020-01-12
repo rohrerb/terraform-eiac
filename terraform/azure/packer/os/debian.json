@@ -1,0 +1,49 @@
+{
+  "variables": {
+    "deployment_code": "",
+    "resource_group": "",
+    "subscription_id": "",
+    "location": "",
+    "cloud_environment_name": "Public"
+  },
+  "builders": [
+    {
+      "type": "azure-arm",
+      "subscription_id": "{{user `subscription_id`}}",
+      "cloud_environment_name": "{{user `cloud_environment_name`}}",
+      "managed_image_resource_group_name": "{{user `resource_group`}}",
+      "managed_image_name": "Debian_9_{{isotime \"2006_01_02_15_04\"}}",
+      "managed_image_storage_account_type": "Premium_LRS",
+      
+      "os_type": "Linux",
+      "image_publisher": "credativ",
+      "image_offer": "Debian",
+      "image_sku": "9",
+
+      "location": "{{user `location`}}",
+      "vm_size": "Standard_DS1_v2",
+
+      "async_resourcegroup_delete": true
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "grep security /etc/apt/sources.list | sudo tee /etc/apt/security.sources.list",
+        "sudo apt-get update",
+        "sudo apt-get upgrade -y -o Dir::Etc::SourceList=/etc/apt/security.sources.list",
+        "sudo apt-get install dialog apt-utils -y",
+        "sudo apt-get install cloud-init -y"
+      ]
+    },
+    {
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+      "inline": [
+        "echo /usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
+      ],
+      "inline_shebang": "/bin/sh -x",
+      "type": "shell"
+    }
+  ]
+}
