@@ -5,7 +5,7 @@ resource "azurerm_public_ip" "vm_pip" {
   name                = format("%s-pip", each.value.full_name)
   location            = local.location
   resource_group_name = var.resource_group_name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
   sku                 = "Basic"
   domain_name_label   = format("%s", each.value.full_name)
 }

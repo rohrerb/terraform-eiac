@@ -97,5 +97,5 @@ variable "enable_bastion" {
 
 variable "ssh_key_path" {
   type    = string
-  default = ""
+  default = "~/.ssh/id_rsa.pub"
 }

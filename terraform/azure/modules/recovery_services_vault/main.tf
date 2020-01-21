@@ -74,7 +74,7 @@ resource "azurerm_storage_account" "primary" {
 }
 
 resource "azurerm_advanced_threat_protection" "threat_protection" {
-  count                    = signum(var.create ? 1 : 0)
+  count                    = 0 #signum(var.create ? 1 : 0)
   target_resource_id = azurerm_storage_account.primary.*.id[0]
   enabled = false
 }
