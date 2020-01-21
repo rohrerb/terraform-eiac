@@ -56,7 +56,7 @@ variable "number_of_vms_in_avset" {
 
 variable "platform_fault_domain_count" {
   description = "Fault Domain Count for Azure"
-  default     = "3"
+  default     = 3
 }
 
 variable "admin_username" {

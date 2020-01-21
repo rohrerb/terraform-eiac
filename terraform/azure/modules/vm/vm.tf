@@ -15,24 +15,14 @@ resource "azurerm_virtual_machine" "vm" {
     prevent_destroy = false
 
     ignore_changes = [
-      #storage_image_reference,
       os_profile
     ]
   }
 
-/*
+
   storage_image_reference {
     id = var.os_disk_image_id
   }
-*/
-
-   storage_image_reference {
-    publisher = "OpenLogic"
-    offer     = "Centos"
-    sku       = "7.7"
-    version   = "latest"
-  } 
-
 
   storage_os_disk {
     name              = format("%s%03d-%s", local.base_hostname, each.value.index, "osdisk")
@@ -53,8 +43,7 @@ resource "azurerm_virtual_machine" "vm" {
       ssh_keys {
         path     = format("/home/%s/.ssh/authorized_keys", var.admin_username)
         key_data = file(local.ssh_key_path)
-      }
-      
+      }    
     }
   }
 

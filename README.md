@@ -8,9 +8,22 @@ With the cloud environment set use `az login` to authenticate with your own cred
 To run:
 
 ```
-usage: deploy.py [-h] -e ENVIRONMENT [-c CLOUD] [-s SECTION]
+usage: deploy.py [-h] -d DEPLOUMENT [-c CLOUD] [-s SECTION]
                  [-a [ACTION [ACTION ...]]] [-t TARGET] [-r RESOURCE] [-v]
                  [-pu] [-us UNLOCK_STATE] [-ss STATE_SNAPSHOT] [-p]       
+                 [-po PACKER_OS]
+deploy.py: error: the following arguments are required: -d/--deploument   
+brrohrer@MININT-PI3EEUJ:/mnt/c/Projects/thebarn/eiac/terraform$ python3 deploy.py -d us1
+Traceback (most recent call last):
+  File "deploy.py", line 329, in <module>
+    initialize_terraform_path_variables()
+  File "deploy.py", line 108, in initialize_terraform_path_variables
+    DEPLOYMENT_PATH = os.path.join(CLOUD_PATH, 'deployments', ARGS.deployment)
+AttributeError: 'Namespace' object has no attribute 'deployment'
+brrohrer@MININT-PI3EEUJ:/mnt/c/Projects/thebarn/eiac/terraform$ python3 deploy.py -h
+usage: deploy.py [-h] -d DEPLOUMENT [-c CLOUD] [-s SECTION]
+                 [-a [ACTION [ACTION ...]]] [-t TARGET] [-r RESOURCE] [-v]
+                 [-pu] [-us UNLOCK_STATE] [-ss STATE_SNAPSHOT] [-p]
                  [-po PACKER_OS]
 
 Run Terraform Wrapper
@@ -18,9 +31,9 @@ Run Terraform Wrapper
 optional arguments:
   -h, --help            show this help message and exit
 
-required environment commands:
-  -e ENVIRONMENT, --environment ENVIRONMENT
-                        Target Environment to Terraform against
+required deployment commands:
+  -d DEPLOUMENT, --deploument DEPLOUMENT
+                        Target Deployment to Terraform against
 
 optional enviornment commands:
   -c CLOUD, --cloud CLOUD
@@ -48,21 +61,20 @@ optional terraform commands:
                         any action except plan.
 
 optional packer commands:
-  -p, --packer          Specify this parameter along with -e to run a packer
-                        build in a environment
+  -p, --packer          Specify this parameter along with -d to run a packer
+                        build in a deployment
   -po PACKER_OS, --packer_os PACKER_OS
                         Specify this parameter if -p is used. Available
                         options are under /packer/os/<filename>
-
 ```
 
 **Action** is plan, apply, destroy, iterate, or import. The default action is _plan_. An 'are you sure?' prompt is presented before you do an _apply_.
 
 **Cloud** is azure. The default provider is *azure*.
 
-**Environment** is sus1, sus2, etc. There is a subdirectory per environment containing the following files:
+**Deployment** is sus1, sus2, etc. There is a subdirectory per deployment containing the following files:
 
-* environment.tfvars - defines the Azure subscription_id, 'sus1va1' name prefix and the deployment plan (how many of each instance type to create; what instance size; what disk size; what storage account type)
+* deployment.tfvars - defines the Azure subscription_id, 'sus1va1' name prefix and the deployment plan (how many of each instance type to create; what instance size; what disk size; what storage account type)
 * secrets.tfvars - *optional*: define any variables that shouldn't be committed to git.
 
 **Target** is used when you want to focus on a specific piece of infrastructure, e.g. ```azurerm_network_security_group.<environment> or module.<environment>.azurerm_virtual_machine.vm```.
@@ -76,31 +88,31 @@ optional packer commands:
 #### Common Terraform Commands:
 
 ###### plan
-`deploy.py -e us1`
+`deploy.py -d us1`
 
 ###### apply
-`deploy.py -e us1 -a apply`
+`deploy.py -d us1 -a apply`
 
 ###### apply w/target
-`deploy.py -e us1 -a apply -t module.rg-test.azurerm_resource_group.rg[0]`
+`deploy.py -d us1 -a apply -t module.rg-test.azurerm_resource_group.rg[0]`
 
 ###### apply w/target(s)
-`deploy.py -e us1 -a apply -t module.rg-test.azurerm_resource_group.rg[0] -t module.rg-test.azurerm_resource_group.rg["test"]`
+`deploy.py -d us1 -a apply -t module.rg-test.azurerm_resource_group.rg[0] -t module.rg-test.azurerm_resource_group.rg["test"]`
 
 ###### state remove
-`deploy.py -e us1 -a state rm -t module.rg-test.azurerm_resource_group.rg[0]`
+`deploy.py -d us1 -a state rm -t module.rg-test.azurerm_resource_group.rg[0]`
 
 ###### state mv
-`deploy.py -e us1 -a state mv -t module.rg-test.azurerm_resource_group.rg[0] -t module.rg-test2.azurerm_resource_group.rg[0]`
+`deploy.py -d us1 -a state mv -t module.rg-test.azurerm_resource_group.rg[0] -t module.rg-test2.azurerm_resource_group.rg[0]`
 
 ###### import
-`deploy.py -e us1 -a import -t module.rg-test.azurerm_resource_group.rg[0] -r /subscriptions/75406810-f3e6-42fa-97c6-e9027e0a0a45/resourceGroups/DUS1VA1-test`
+`deploy.py -d us1 -a import -t module.rg-test.azurerm_resource_group.rg[0] -r /subscriptions/75406810-f3e6-42fa-97c6-e9027e0a0a45/resourceGroups/DUS1VA1-test`
 
 ###### taint
-`deploy.py -e us1 -a taint -t null_resource.image`
+`deploy.py -d us1 -a taint -t null_resource.image`
 
 ###### untaint
-`deploy.py -e us1 -a untaint -t null_resource.image`
+`deploy.py -d us1 -a untaint -t null_resource.image`
 
 ##### unlock a remote state file
 If you receive this message you can unlock using the below command. Grab the *ID* under *Lock Info:*
@@ -118,10 +130,16 @@ Lock Info:
   Info:    
 ```
 
-`deploy.py -e us1 --unlock_state 047c2e42-69b7-4006-68a5-573ad93a769a`
+`deploy.py -d us1 --unlock_state 047c2e42-69b7-4006-68a5-573ad93a769a`
 
 
 #### Common Packer Commands:
 
-###### build
-`deploy.py -p -po ubuntu -e us1`
+###### build ubuntu
+`deploy.py -p -po ubuntu -d us1`
+
+###### build centos
+`deploy.py -p -po centos -d us1`
+
+###### build windows
+`deploy.py -p -po windows -d us1`

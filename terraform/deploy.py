@@ -23,8 +23,8 @@ def initialize_arguments():
     """Configures ARGS"""
     parser = argparse.ArgumentParser(description='Run Terraform Wrapper')
 
-    arg_required = parser.add_argument_group('required environment commands')
-    arg_required.add_argument('-e', '--environment', help='Target Environment to Terraform against', required=True)
+    arg_required = parser.add_argument_group('required deployment commands')
+    arg_required.add_argument('-d', '--deployment', help='Target Deployment to Terraform against', required=True)
 
     arg_optional = parser.add_argument_group('optional enviornment commands')
     arg_optional.add_argument('-c', '--cloud', default='azure', help='Cloud to Target')
@@ -32,6 +32,7 @@ def initialize_arguments():
     arg_optional.add_argument('-a', '--action', default='plan', nargs="*", help='Available terraform actions; plan, apply, taint, untaint, state, import')
     arg_optional.add_argument('-t', '--target', action='append', help='Specify specific modules for the selected --action')
     arg_optional.add_argument('-r', '--resource', help='ResourceID which is used if doing a state import.')
+    arg_optional.add_argument('-w', '--workspace', default='default', help='Workspace you are targetting.')
     arg_optional.add_argument('-v', '--verbose', action='store_true', help='Show verbose outputs')
 
     arg_opt_tf_commands = parser.add_argument_group('optional terraform commands')
@@ -40,7 +41,7 @@ def initialize_arguments():
     arg_opt_tf_commands.add_argument('-ss', '--state_snapshot', default=True, help='Default enabled will take a snapshot of the state on any action except plan.')
 
     arg_packer_commands = parser.add_argument_group('optional packer commands')
-    arg_packer_commands.add_argument('-p', '--packer', action='store_true', help='Specify this parameter along with -e to run a packer build in a environment')
+    arg_packer_commands.add_argument('-p', '--packer', action='store_true', help='Specify this parameter along with -e to run a packer build in a deployment')
     arg_packer_commands.add_argument('-po', '--packer_os', default='ubuntu', help='Specify this parameter if -p is used.  Available options are under /packer/os/<filename>')
 
     return parser.parse_args()
@@ -54,8 +55,14 @@ def is_installed(name):
 def check_for_required_packages():
     """Confirms required packages are installed."""
     packages_missing = []
-    if not is_installed('terraform'):
-        packages_missing.append('\t Terraform is required, please install at https://terraform.io')
+
+    if ARGS.packer:
+        if not is_installed('packer'):
+            packages_missing.append('\t Packer is required, please install at https://packer.io')
+    else:
+        if not is_installed('terraform'):
+            packages_missing.append('\t Terraform is required, please install at https://terraform.io') 
+    
     if ARGS.cloud == 'azure' and not is_installed('az'):
         packages_missing.append('\t azure-cli is required, please install at https://aka.ms/azure-cli')
 
@@ -67,7 +74,7 @@ def check_for_required_packages():
         raise SystemExit
 
 def get_terraform_variable(file, variable_name):
-    """Extracts Terraform variable value from environment folder."""
+    """Extracts Terraform variable value from deployment folder."""
     found_line = ''
     with open(file, "r") as ofile:
         for line in [line for line in ofile if variable_name in line]:
@@ -99,8 +106,8 @@ def initialize_terraform_path_variables():
     
     SECTION_PATH = os.path.join(CLOUD_PATH, ARGS.section)
     BACKEND_PATH = os.path.join(SECTION_PATH, 'backend.tf')
-    DEPLOYMENT_PATH = os.path.join(CLOUD_PATH, 'deployments', ARGS.environment)
-    VARS_PATH = os.path.join(DEPLOYMENT_PATH, 'environment.tfvars')
+    DEPLOYMENT_PATH = os.path.join(CLOUD_PATH, 'deployments', ARGS.deployment)
+    VARS_PATH = os.path.join(DEPLOYMENT_PATH, 'deployment.tfvars')
     SECRETS_PATH = os.path.join(DEPLOYMENT_PATH, 'secrets.tfvars')
 
     if ARGS.verbose:
@@ -126,7 +133,7 @@ def initialize_terraform():
     print('Runtime Variables:')
     print('\t Cloud: ' + ARGS.cloud)
     print('\t Section: ' + ARGS.section)
-    print('\t Environment: ' + ARGS.environment)
+    print('\t Deployment: ' + ARGS.deployment)
     if isinstance(ARGS.action, list):
         print('\t Action: ' + ' '.join([str(act) for act in ARGS.action]))
     else:
@@ -147,7 +154,7 @@ def initialize_terraform():
         print(os.linesep.join([str('\t\t' + i) for i in ARGS.target if i]))
 
     if ARGS.verbose:
-        print('Environment Variables:')
+        print('Deployment Variables:')
         print('\t Environment_Code: ' + environment_code)
         print('\t Deployment_Code: ' + deployment_code)
         print('\t Location_Code: ' + location_code)
@@ -190,7 +197,7 @@ def initialize_terraform():
 
             switch_backend_type('local')
 
-            TF_STATE = os.path.join(DEPLOYMENT_PATH, ARGS.section, 'terraform.tfstate')
+            TF_STATE = os.path.join(DEPLOYMENT_PATH, 'state', ARGS.section, 'terraform.tfstate')
 
         if ARGS.plugin_update:
             run_command(['terraform', 'init', '-reconfigure', '-get=true', '-get-plugins=true', '-upgrade=true', '-verify-plugins=true'] + backend_configs, show_output=True)
@@ -300,11 +307,11 @@ def run_packer():
     """Execute Packer with variables"""
 
     packer_path = os.path.join(CLOUD_PATH, 'packer')
-    packer_deployment_path = os.path.join(packer_path, 'deployments', ARGS.environment + '.json')
+    packer_deployment_path = os.path.join(packer_path, 'deployments', ARGS.deployment + '.json')
     packer_os_path = os.path.join(packer_path, 'os', ARGS.packer_os + '.json')
 
     print('Runtime Variables:')
-    print('\t Environment: ' + ARGS.environment)
+    print('\t Deployment: ' + ARGS.deployment)
     print('\t Packer: ' + packer_path)
     print('\t Deployment: ' + packer_deployment_path)
     print('\t OS: ' + packer_os_path)

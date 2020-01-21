@@ -22,7 +22,7 @@ enable_bastion = true
 name_servers = []
 
 vm_instance_maps = {
-  lweb = { count = 0, size = "Standard_D2s_v3", os_disk_size = 30, enable_recovery = false, enable_public_ip = true, enable_vm_diagnostics = true }
+  lweb = { count = 0, size = "Standard_D2s_v3", os_disk_size = 30, enable_recovery = false, enable_public_ip = true, enable_vm_diagnostics = false }
   lsql = { count = 0, size = "Standard_D2s_v3", os_disk_size = 30, data_disk_count = 2, data_disk_size = 5 }
 }
 

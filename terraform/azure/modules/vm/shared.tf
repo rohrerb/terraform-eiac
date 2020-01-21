@@ -22,13 +22,13 @@ resource "azurerm_availability_set" "av_set" {
   location                     = local.location
   resource_group_name          = var.resource_group_name
   managed                      = true
-  platform_fault_domain_count  = var.platform_fault_domain_count
+  platform_fault_domain_count  = local.platform_fault_domain_count
   platform_update_domain_count = 20
 }
 
 resource "random_password" "vm_password" {
   for_each = { for i in local.items : i.key => i 
-               #if var.os_code == var.os_code_windows 
+               if var.os_code == var.os_code_windows 
                }
 
   length  = 16

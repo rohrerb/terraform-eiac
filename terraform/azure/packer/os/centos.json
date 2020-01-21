@@ -18,7 +18,7 @@
       "os_type": "Linux",
       "image_publisher": "OpenLogic",
       "image_offer": "Centos",
-      "image_sku": "7.7",
+      "image_sku": "7.6",
 
       "location": "{{user `location`}}",
       "vm_size": "Standard_DS1_v2",

@@ -5,7 +5,7 @@ locals {
 
 module "lweb-nsg" {
   source               = "../modules/nsg"
-  create               = false # (signum(local.lweb_count) == 0 ? false : true)
+  create               = (signum(local.lweb_count) == 0 ? false : true)
   full_env_code        = local.full_env_code
   name                 = "lweb-nsg"
   location             = var.location
@@ -16,7 +16,7 @@ module "lweb-nsg" {
 
 module "lweb-nsg-rules" {
   source                      = "../modules/nsg_rule"
-  create                      = false # (signum(local.lweb_count) == 0 ? false : true)
+  create                      = (signum(local.lweb_count) == 0 ? false : true)
   resource_group_name         = module.rg-dmz.name
   network_security_group_name = module.lweb-nsg.name
   location                    = var.location
@@ -30,7 +30,7 @@ module "lweb-lb" {
   source              = "../modules/lb_public"
   name                = "lweb"
   full_env_code       = local.full_env_code
-  create              = false #(signum(local.lweb_count) == 0 ? false : true)
+  create              = (signum(local.lweb_count) == 0 ? false : true)
   location            = var.location
   resource_group_name = module.rg-dmz.name
   subnet_id           = azurerm_subnet.subnet["DMZ"].id
@@ -49,12 +49,11 @@ module "lweb" {
   instance_type = "web"
   number_of_vms_in_avset = local.lweb_count
   resource_group_name = module.rg-dmz.name
-  os_disk_image_id    = data.azurerm_image.centos.id
+  os_disk_image_id    = data.azurerm_image.ubuntu.id
 
   subnet_id                 = azurerm_subnet.subnet["DMZ"].id
-  #network_security_group_id = local.lweb_count == 0 ? "" : module.lweb-nsg.id
+  network_security_group_id = local.lweb_count == 0 ? "" : module.lweb-nsg.id
 
-  #enable_external_lb               = local.lweb_count == 0 ? false : true
-  #backend_address_pool_id_external = module.lweb-lb.backend_pool_id
-  
+  enable_external_lb               = local.lweb_count == 0 ? false : true
+  backend_address_pool_id_external = module.lweb-lb.backend_pool_id
 }

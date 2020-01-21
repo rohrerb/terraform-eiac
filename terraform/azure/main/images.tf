@@ -12,11 +12,10 @@ data "azurerm_image" "centos" {
   sort_descending     = true
 }
 
-
-resource "null_resource" "image" {
-  triggers = {
-    id = data.azurerm_image.centos.id
-  }
+data "azurerm_image" "ubuntu" {
+  name_regex          = "^Ubuntu"
+  resource_group_name = module.rg-packer.name
+  sort_descending     = true
 }
 
 
