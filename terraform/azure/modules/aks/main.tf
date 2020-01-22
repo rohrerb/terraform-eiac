@@ -6,7 +6,7 @@ locals {
 }
 
 resource "azuread_application" "aks_app" {
-  name                       = format("%s-%s-msi", upper(var.full_env_code), lower(var.name_suffix))
+  name                       = format("%s-%s-msi", var.full_env_code, lower(var.name_suffix))
   available_to_other_tenants = false
   oauth2_allow_implicit_flow = true
 }
@@ -27,7 +27,7 @@ resource "azuread_service_principal_password" "aks_sp_ad" {
 }
 
 resource "azurerm_kubernetes_cluster" "aks-cluster" {
-  name                = format("%s-%s", upper(var.full_env_code), lower(var.name_suffix))
+  name                = format("%s-%s", var.full_env_code, lower(var.name_suffix))
   location            = var.location
   resource_group_name = var.resource_group_name
   dns_prefix          = var.dns_prefix

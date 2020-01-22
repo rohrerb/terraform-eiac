@@ -99,6 +99,9 @@ optional packer commands:
 ###### apply w/target(s)
 `deploy.py -d us1 -a apply -t module.rg-test.azurerm_resource_group.rg[0] -t module.rg-test.azurerm_resource_group.rg["test"]`
 
+###### apply w/target against a tf file.  
+`deploy.py -d us1  -t resource_groups.tf`
+
 ###### state remove
 `deploy.py -d us1 -a state rm -t module.rg-test.azurerm_resource_group.rg[0]`
 

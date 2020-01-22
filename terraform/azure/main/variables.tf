@@ -44,7 +44,7 @@ variable "subnet" {
   }
 }
 
-variable "name_servers" {
+variable "dns_servers" {
   description = "Name server IP list"
   type        = list
   default     = []
@@ -60,11 +60,11 @@ variable "os_code_windows" {
   default     = "w"
 }
 
-variable "isAzureGovernment" {
+variable "is_azure_government" {
   default = false
 }
 
-variable "enable_RemoteState" {
+variable "enable_remote_state" {
   default = false
 }
 

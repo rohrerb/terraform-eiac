@@ -3,7 +3,7 @@ module "recovery-vault" {
   source = "../modules/recovery_services_vault"
 
   create        = (var.enable_recovery_services && var.enable_secondary)
-  full_env_code = upper(local.full_env_code_secondary)
+  full_env_code = local.full_env_code_secondary
 
   location_primary   = var.location
   location_secondary = var.location_secondary

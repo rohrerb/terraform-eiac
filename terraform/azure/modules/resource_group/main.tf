@@ -1,6 +1,6 @@
 resource "azurerm_resource_group" "rg" {
   count    = signum(var.create ? 1 : 0)
-  name     = format("%s-%s", upper(var.full_env_code), lower(var.name_suffix))
+  name     = format("%s-%s", var.full_env_code, lower(var.name_suffix))
   location = var.location
   tags     = var.tags
 }

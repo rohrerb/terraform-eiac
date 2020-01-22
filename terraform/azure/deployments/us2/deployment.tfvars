@@ -1,5 +1,5 @@
 subscription_id = "7d559a72-c8b6-4d07-9ec0-5ca5b14a25e7"
-enable_RemoteState = true
+enable_remote_state = true
 
 environment_code        = "d"
 deployment_code         = "us2"
@@ -19,7 +19,7 @@ enable_recovery_services = false
 
 enable_bastion = true
 
-name_servers = []
+dns_servers = []
 
 vm_instance_maps = {
   lweb = { count = 0, size = "Standard_D2s_v3", os_disk_size = 30, enable_recovery = false, enable_public_ip = true, enable_vm_diagnostics = false }

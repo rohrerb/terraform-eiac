@@ -4,7 +4,7 @@ output "id" {
 }
 
 output "name" {
-  value = format("%s-%s", upper(var.full_env_code), lower(var.name_suffix))
+  value = format("%s-%s", var.full_env_code, lower(var.name_suffix))
 }
 
 output "location" {

@@ -1,6 +1,7 @@
 subscription_id = "75406810-f3e6-42fa-97c6-e9027e0a0a45"
-isAzureGovernment = true
-enable_RemoteState = false
+
+is_azure_government = true
+enable_remote_state = false
 
 environment_code        = "d"
 deployment_code         = "us1"
@@ -18,9 +19,9 @@ network_octets_secondary = "10.2"
 enable_secondary         = true
 enable_recovery_services = false
 
-name_servers = []
+dns_servers = []
 
 vm_instance_maps = {
-  lweb = { count = 1, size = "Standard_D2s_v3", os_disk_size = 30, data_disk_count = 0, data_disk_size = 0, enable_public_ip = true, enable_recovery = false }
+  lweb = { count = 0, size = "Standard_D2s_v3", os_disk_size = 30, data_disk_count = 0, data_disk_size = 0, enable_public_ip = true, enable_recovery = false }
   lsql = { count = 0, size = "Standard_D2s_v3", os_disk_size = 30 }
 }
