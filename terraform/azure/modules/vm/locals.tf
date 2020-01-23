@@ -5,6 +5,7 @@ locals {
   ssh_key_path                = var.vm_generic_map.ssh_key_path
   location                    = var.vm_generic_map.location
   location_secondary          = var.vm_generic_map.location_secondary
+  deploy_using_zones          = var.vm_generic_map.deploy_using_zones
   recovery_services_map       = jsondecode(var.vm_generic_map.recovery_services_map)
 
   base_hostname    = format("%s%s%s", local.full_env_code, var.os_code, var.instance_type)
@@ -28,6 +29,12 @@ locals {
       "lun"    = i % local.data_disk_count,
       "vm_key" = format("%s%s%03d", var.os_code, var.instance_type, ceil((i + 1) * 1.0 / local.data_disk_count))
   }]
+
+   cloud_init_vars = (var.cloud_init_vars != null ? var.cloud_init_vars : 
+                      {
+                          admin_username = var.admin_username 
+                      })
+  
 }
 
 /*

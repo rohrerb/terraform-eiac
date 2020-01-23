@@ -8,7 +8,5 @@ data "template_file" "cloudconfig" {
 
   template = "${file(format("%s/cloud-init/%s%s_cloudconfig.tpl", path.root, var.os_code, var.instance_type))}"
 
-  vars = {
-    //deployment_code = "${var.deployment_code}"
-  }
+  vars = local.cloud_init_vars  
 }

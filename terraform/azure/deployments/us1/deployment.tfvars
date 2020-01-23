@@ -22,6 +22,6 @@ enable_recovery_services = false
 dns_servers = []
 
 vm_instance_maps = {
-  lweb = { count = 0, size = "Standard_D2s_v3", os_disk_size = 30, data_disk_count = 0, data_disk_size = 0, enable_public_ip = true, enable_recovery = false }
+  lngx = { count = 0, size = "Standard_D2s_v3", os_disk_size = 30, data_disk_count = 0, data_disk_size = 0, enable_public_ip = true, enable_recovery = false }
   lsql = { count = 0, size = "Standard_D2s_v3", os_disk_size = 30 }
 }

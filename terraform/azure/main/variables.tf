@@ -95,6 +95,13 @@ variable "enable_bastion" {
   default = false
 }
 
+variable "deploy_using_zones" {
+    type    = bool
+  default = false
+  description = "If Enabled the VMs will be spread accros Availability Zones vs Availability Sets."
+}
+
+
 variable "ssh_key_path" {
   type    = string
   default = "~/.ssh/id_rsa.pub"

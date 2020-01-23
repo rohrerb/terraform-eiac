@@ -92,3 +92,12 @@ variable "vm_generic_map" {
   type    = map
   default = {}
 }
+
+variable "number_of_zones" {
+  default = 3
+}
+
+variable "cloud_init_vars" {
+  type = map
+  default = null
+}
