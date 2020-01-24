@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 """This is a wrapper script to enable a user to deploy to multiple environments while using a single code construct"""
 import os
 import shutil

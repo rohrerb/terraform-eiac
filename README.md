@@ -10,19 +10,6 @@ To run:
 ```
 usage: deploy.py [-h] -d DEPLOUMENT [-c CLOUD] [-s SECTION]
                  [-a [ACTION [ACTION ...]]] [-t TARGET] [-r RESOURCE] [-v]
-                 [-pu] [-us UNLOCK_STATE] [-ss STATE_SNAPSHOT] [-p]       
-                 [-po PACKER_OS]
-deploy.py: error: the following arguments are required: -d/--deploument   
-brrohrer@MININT-PI3EEUJ:/mnt/c/Projects/thebarn/eiac/terraform$ python3 deploy.py -d us1
-Traceback (most recent call last):
-  File "deploy.py", line 329, in <module>
-    initialize_terraform_path_variables()
-  File "deploy.py", line 108, in initialize_terraform_path_variables
-    DEPLOYMENT_PATH = os.path.join(CLOUD_PATH, 'deployments', ARGS.deployment)
-AttributeError: 'Namespace' object has no attribute 'deployment'
-brrohrer@MININT-PI3EEUJ:/mnt/c/Projects/thebarn/eiac/terraform$ python3 deploy.py -h
-usage: deploy.py [-h] -d DEPLOUMENT [-c CLOUD] [-s SECTION]
-                 [-a [ACTION [ACTION ...]]] [-t TARGET] [-r RESOURCE] [-v]
                  [-pu] [-us UNLOCK_STATE] [-ss STATE_SNAPSHOT] [-p]
                  [-po PACKER_OS]
 
@@ -32,7 +19,7 @@ optional arguments:
   -h, --help            show this help message and exit
 
 required deployment commands:
-  -d DEPLOUMENT, --deploument DEPLOUMENT
+  -d DEPLOYMENT, --deployment DEPLOUMENT
                         Target Deployment to Terraform against
 
 optional enviornment commands:
