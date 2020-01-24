@@ -2,8 +2,6 @@
 package_upgrade: true
 packages:
   - nginx
-  - nodejs
-  - npm
 write_files:
   - owner: www-data:www-data
   - path: /etc/nginx/sites-available/default
@@ -26,16 +24,65 @@ write_files:
       var app = express()
       var os = require('os');
       app.get('/', function (req, res) {
-        res.send('Hello World from host ' + os.hostname() + '!')
-      })
+          var Connection = require('tedious').Connection;
+
+          var config = {
+              server: 'dus2ea1lsql001.eastus.cloudapp.azure.com', //update me
+              authentication: {
+                  type: 'default',
+                  options: {
+                      userName: 'sa', //update me
+                      password: 'hf5[8:18=lqx}xBT' //update me
+                  }
+              }
+          };
+
+          var connection = new Connection(config);
+          connection.on('connect', function (err) {
+              // If no error, then good to proceed.  
+              console.log("Connected");
+              executeStatement();
+          });
+
+          var Request = require('tedious').Request;
+          var TYPES = require('tedious').TYPES;
+
+          function executeStatement() {
+              request = new Request("SELECT @@VERSION;", function (err) {
+                  if (err) {
+                      console.log(err);
+                  }
+              });
+              var result = 'Hello World from host1 ' + os.hostname() + '! \n';
+              request.on('row', function (columns) {
+                  columns.forEach(function (column) {
+                      if (column.value === null) {
+                          console.log('NULL');
+                      } else {
+                          result += column.value + " ";
+                      }
+                  });
+                  res.send(result);
+                  result = "";
+              });
+
+              connection.execSql(request);
+          }
+
+
+
+      });
       app.listen(3000, function () {
-        console.log('Hello world app listening on port 3000!')
+          console.log('Hello world app listening on port 3000!')
       })
 runcmd:
   - service nginx restart
   - cd "/home/${admin_username}/myapp"
+  - curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+  - sudo apt install nodejs -y
   - npm init
   - npm install express -y
+  - npm install tedious -y
   - nodejs index.js
 
 

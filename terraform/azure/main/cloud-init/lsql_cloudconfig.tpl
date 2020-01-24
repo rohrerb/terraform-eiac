@@ -26,8 +26,8 @@ runcmd:
 
   - echo Installing SQL Server Tools...
   - sudo apt-get update 
-  - sudo ACCEPT_EULA=Y apt-get install mssql-tools unixodbc-dev
-  - sudo apt-get install mssql-tools
+  - sudo ACCEPT_EULA=Y apt-get install mssql-tools unixodbc-dev -y
+  - sudo apt-get install mssql-tools -y
 
   - echo Adding SQL Server tools to your path...
   - echo PATH="$PATH:/opt/mssql-tools/bin" >> ~/.bash_profile

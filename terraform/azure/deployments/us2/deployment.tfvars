@@ -23,9 +23,8 @@ deploy_using_zones = true
 dns_servers = []
 
 vm_instance_maps = {
-  lngx = { count = 0, size = "Standard_D2s_v3", os_disk_size = 30, enable_recovery = false, enable_public_ip = false, enable_vm_diagnostics = false }
-  lsql = { count = 1, size = "Standard_D2s_v3", os_disk_size = 30, data_disk_count = 0, data_disk_size = 5, enable_public_ip = true }
+  lngx = { count = 2, size = "Standard_D2s_v3", os_disk_size = 30, enable_recovery = false, enable_public_ip = false, enable_vm_diagnostics = false }
+  lsql = { count = 1, size = "Standard_D2s_v3", os_disk_size = 30, data_disk_count = 0, data_disk_size = 5, enable_public_ip = false }
 }
-
 
 

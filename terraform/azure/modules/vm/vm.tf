@@ -61,8 +61,8 @@ resource "azurerm_virtual_machine" "vm" {
   os_profile {
     computer_name  = each.value.full_name
     admin_username = var.admin_username
-    admin_password = (var.os_code == var.os_code_windows ? random_password.vm_password[each.key].result : "")
-    custom_data    = (var.os_code == var.os_code_windows ? "" : data.template_file.cloudconfig[each.key].rendered)
+    admin_password = (var.os_code == var.os_code_windows ? random_password.vm_password[each.key].result : null)
+    custom_data    = (var.os_code != var.os_code_windows && fileexists(local.cloud_init_file)  ? data.template_file.cloudconfig[each.key].rendered : null)
   }
 
   dynamic "boot_diagnostics" {

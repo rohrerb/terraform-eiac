@@ -16,7 +16,7 @@ locals {
   enable_recovery  = tobool(lookup(var.vm_instance_map, "enable_recovery", false))
   enable_public_ip = tobool(lookup(var.vm_instance_map, "enable_public_ip", false))
   enable_vm_diagnostics = tobool(lookup(var.vm_instance_map, "enable_vm_diagnostics", false))
-
+  cloud_init_file = format("%s/cloud-init/%s%s_cloudconfig.tpl", path.root, var.os_code, var.instance_type)
 
   items = [for i in range(0, local.instance_count) :
     { "key"       = format("%s%s%03d", var.os_code, var.instance_type, i + 1),

@@ -22,7 +22,7 @@ module "lsql-nsg-rules" {
   network_security_group_name = module.lsql-nsg.name
   location                    = var.location
   rules_map = {
-    sql_inbound = { priority = 110, direction = "Inbound", access = "Allow", protocol = "TCP", destination_port_range = "1443" }
+    sql_inbound = { priority = 110, direction = "Inbound", access = "Allow", protocol = "TCP", destination_port_range = "1433" }
   }
 }
 
