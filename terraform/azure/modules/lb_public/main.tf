@@ -1,15 +1,17 @@
 
 resource "azurerm_public_ip" "lb-pip" {
   count               = (var.create ? 1 : 0)
-  name                = format("%s-%s-%s", var.full_env_code, var.name, "lb-pip")
+  name                = format("%s%s-%s", var.full_env_code, var.name, "lb-pip")
   location            = var.location
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
   sku                 = var.sku
+
+  domain_name_label   = format("%s%s-%s", var.full_env_code, var.name, "lb-pip")
 }
 
 resource "azurerm_lb" "lb" {
-  name                = format("%s-%s-%s", var.full_env_code, var.name, "lb")
+  name                = format("%s%s-%s", var.full_env_code, var.name, "lb")
   count               = (var.create ? 1 : 0)
   sku                 = var.sku
   resource_group_name = var.resource_group_name

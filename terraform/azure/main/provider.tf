@@ -8,3 +8,5 @@ provider "azuread" {
 }
 
 provider "random" {}
+
+provider "null" {}

@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 """This is a wrapper script to enable a user to deploy to multiple environments while using a single code construct"""
 import os
 import shutil
@@ -117,6 +119,23 @@ def initialize_terraform_path_variables():
         print('\t VARS_PATH: ' + VARS_PATH)
         print('\t SECRETS_PATH: ' + SECRETS_PATH)
 
+def initialize_target_files():
+    if ARGS.target:
+        for i in range(len(ARGS.target)):
+            target = ARGS.target[i]
+            if os.path.exists(target):
+                #Path exists, clear this item and pull in targets dynamically
+                ARGS.target.pop(i)
+                with open(target, "r") as fobj:
+                    for rel in re.findall('(.*?){', fobj.read()):
+                        fsect = re.findall(r'"(.*?)"', rel) 
+                        if 'module' in rel:
+                            ARGS.target.append('{}.{}'.format('module', fsect[0]))
+                        elif 'data' in rel:
+                            ARGS.target.append('{}.{}'.format('data', '.'.join(fsect)))
+                        elif 'resource' in rel:
+                            ARGS.target.append('{}'.format('.'.join(fsect)))
+
 def initialize_terraform():
     """Init all variables and backend state"""
     global TF_STATE
@@ -128,7 +147,6 @@ def initialize_terraform():
     deployment_code = get_terraform_variable(VARS_PATH, 'deployment_code')
     location_code = get_terraform_variable(VARS_PATH, 'location_code')
     environment_full_prefix_lower = (environment_code + deployment_code + location_code).lower()
-    environment_full_prefix_upper = (environment_code + deployment_code + location_code).upper()
 
     print('Runtime Variables:')
     print('\t Cloud: ' + ARGS.cloud)
@@ -142,6 +160,8 @@ def initialize_terraform():
     print('\t Secrets: ' + SECRETS_PATH)
     print('\t Section: ' + SECTION_PATH)
     print('\t Deployment: ' + DEPLOYMENT_PATH)
+
+    initialize_target_files()
 
     if ARGS.target:
         #Clean up v12 targets, Quotes get stripped in terminal
@@ -158,12 +178,13 @@ def initialize_terraform():
         print('\t Environment_Code: ' + environment_code)
         print('\t Deployment_Code: ' + deployment_code)
         print('\t Location_Code: ' + location_code)
-        print('\t Full_Prefix: ' + environment_full_prefix_upper)
+        print('\t Full_Prefix: ' + environment_full_prefix_lower)
 
     if ARGS.cloud == 'azure':
         subscription_id = get_terraform_variable(VARS_PATH, 'subscription_id')
-        is_azure_government = get_terraform_variable(VARS_PATH, 'isAzureGovernment')
-        ENABLE_REMOTE_STATE = get_terraform_variable(VARS_PATH, 'enable_RemoteState')
+        if subscription_id == '': subscription_id = get_terraform_variable(SECRETS_PATH, 'subscription_id')
+        is_azure_government = get_terraform_variable(VARS_PATH, 'is_azure_government')
+        ENABLE_REMOTE_STATE = get_terraform_variable(VARS_PATH, 'enable_remote_state')
 
         azure_cloud = 'AzureCloud'
         backend_configs = []
@@ -179,7 +200,7 @@ def initialize_terraform():
 
             switch_backend_type('azurerm')
 
-            terrform_resourcegroup_name = environment_full_prefix_upper + '-Storage-Terraform'
+            terrform_resourcegroup_name = environment_full_prefix_lower + '-storage-terraform'
             terrform_storage_name = environment_full_prefix_lower + 'terraform'
 
             resource_group = run_command_with_result(['az', 'group', 'list', '--query', '[?name==\'{}\'].name'.format(terrform_resourcegroup_name), '--output', 'tsv'])
@@ -226,7 +247,7 @@ def run_command(command_list, show_output=False, show_command=True):
     clean_command_list = [i for i in command_list if i]
 
     if show_command: print(Fore.YELLOW + 'Running: ' + ' '.join([str(e) for e in clean_command_list]) + Style.RESET_ALL)
-    
+
     if ARGS.verbose or show_output:
         process = subprocess.Popen(clean_command_list, universal_newlines=True, cwd=os.getcwd())
         process.communicate()
@@ -288,7 +309,7 @@ def snapshot_terraform_state():
             dtime = datetime.datetime.now()
             state_path = os.path.dirname(TF_STATE)
             state_file_backup = TF_STATE + str(dtime.timestamp()) + '_backup'
-            shutil.copyfile(TF_STATE, state_file_backup)
+            if os.path.exists(TF_STATE): shutil.copyfile(TF_STATE, state_file_backup)
             
             #Purge old backups older than number_of_days
             number_of_days = 30

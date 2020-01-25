@@ -1,6 +1,6 @@
 resource "azurerm_network_security_group" "nsg" {
   count               = (var.create ? 1 : 0)
-  name                = format("%s-%s", var.full_env_code, lower(var.name))
+  name                = format("%s%s", var.full_env_code, lower(var.name))
   location            = var.location
   resource_group_name = var.resource_group_name
 }

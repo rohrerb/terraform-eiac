@@ -4,7 +4,8 @@ resource "azurerm_virtual_machine" "vm" {
   name                  = format("%s%03d", local.base_hostname, each.value.index)
   location              = local.location
   resource_group_name   = var.resource_group_name
-  availability_set_id   = var.number_of_vms_in_avset == 0 ? "" : element(concat(azurerm_availability_set.av_set.*.id, list("")), 0)
+  availability_set_id   = local.deploy_using_zones || var.number_of_vms_in_avset == 0 ? null : element(concat(azurerm_availability_set.av_set.*.id, list("")), 0)
+  zones                 = local.deploy_using_zones ? [(each.value.index % var.number_of_zones) + 1] : null
   vm_size               = var.vm_instance_map.size
   network_interface_ids = [azurerm_network_interface.vm_nic[each.key].id]
 
@@ -38,7 +39,7 @@ resource "azurerm_virtual_machine" "vm" {
     if var.os_code == var.os_code_linux }
 
     content {
-      disable_password_authentication = false
+      disable_password_authentication = true
       
       ssh_keys {
         path     = format("/home/%s/.ssh/authorized_keys", var.admin_username)
@@ -60,8 +61,8 @@ resource "azurerm_virtual_machine" "vm" {
   os_profile {
     computer_name  = each.value.full_name
     admin_username = var.admin_username
-    admin_password = (var.os_code == var.os_code_windows ? random_password.vm_password[each.key].result : "")
-    custom_data    = (var.os_code == var.os_code_windows ? "" : data.template_file.cloudconfig[each.key].rendered)
+    admin_password = (var.os_code == var.os_code_windows ? random_password.vm_password[each.key].result : null)
+    custom_data    = (var.os_code != var.os_code_windows && fileexists(local.cloud_init_file)  ? data.template_file.cloudconfig[each.key].rendered : null)
   }
 
   dynamic "boot_diagnostics" {

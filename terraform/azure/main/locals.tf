@@ -11,6 +11,7 @@ locals {
     location                    = var.location
     location_secondary          = var.location_secondary
     ssh_key_path                = var.ssh_key_path
+    deploy_using_zones          = var.deploy_using_zones
     recovery_services_map       = jsonencode(module.recovery-vault.outputs)
   }
 }

@@ -9,7 +9,7 @@ resource "azurerm_managed_disk" "data_disk" {
   storage_account_type = var.storage_type
   create_option        = "Empty"
   disk_size_gb         = local.data_disk_size
-
+  zones                = local.deploy_using_zones ? azurerm_virtual_machine.vm[each.value.vm_key].zones : null
 }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "data_disk_attach" {

@@ -5,6 +5,7 @@ locals {
   ssh_key_path                = var.vm_generic_map.ssh_key_path
   location                    = var.vm_generic_map.location
   location_secondary          = var.vm_generic_map.location_secondary
+  deploy_using_zones          = var.vm_generic_map.deploy_using_zones
   recovery_services_map       = jsondecode(var.vm_generic_map.recovery_services_map)
 
   base_hostname    = format("%s%s%s", local.full_env_code, var.os_code, var.instance_type)
@@ -15,7 +16,7 @@ locals {
   enable_recovery  = tobool(lookup(var.vm_instance_map, "enable_recovery", false))
   enable_public_ip = tobool(lookup(var.vm_instance_map, "enable_public_ip", false))
   enable_vm_diagnostics = tobool(lookup(var.vm_instance_map, "enable_vm_diagnostics", false))
-
+  cloud_init_file = format("%s/cloud-init/%s%s_cloudconfig.tpl", path.root, var.os_code, var.instance_type)
 
   items = [for i in range(0, local.instance_count) :
     { "key"       = format("%s%s%03d", var.os_code, var.instance_type, i + 1),
@@ -28,6 +29,12 @@ locals {
       "lun"    = i % local.data_disk_count,
       "vm_key" = format("%s%s%03d", var.os_code, var.instance_type, ceil((i + 1) * 1.0 / local.data_disk_count))
   }]
+
+   cloud_init_vars = (var.cloud_init_vars != null ? var.cloud_init_vars : 
+                      {
+                          admin_username = var.admin_username 
+                      })
+  
 }
 
 /*

@@ -17,7 +17,7 @@ resource "azurerm_advanced_threat_protection" "threat_protection" {
 
 
 resource "azurerm_availability_set" "av_set" {
-  count                        = var.number_of_vms_in_avset == 0 ? 0 : signum(local.instance_count)
+  count                        = local.deploy_using_zones || var.number_of_vms_in_avset == 0 ? 0 : signum(local.instance_count)
   name                         = format("%s-AVSet", local.base_hostname)
   location                     = local.location
   resource_group_name          = var.resource_group_name
