@@ -8,5 +8,5 @@ data "template_file" "cloudconfig" {
   }
 
   template = "${file(local.cloud_init_file)}"
-  vars = local.cloud_init_vars  
+  vars     = local.cloud_init_vars
 }

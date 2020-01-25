@@ -40,11 +40,11 @@ resource "azurerm_virtual_machine" "vm" {
 
     content {
       disable_password_authentication = true
-      
+
       ssh_keys {
         path     = format("/home/%s/.ssh/authorized_keys", var.admin_username)
         key_data = file(local.ssh_key_path)
-      }    
+      }
     }
   }
 
@@ -62,7 +62,7 @@ resource "azurerm_virtual_machine" "vm" {
     computer_name  = each.value.full_name
     admin_username = var.admin_username
     admin_password = (var.os_code == var.os_code_windows ? random_password.vm_password[each.key].result : null)
-    custom_data    = (var.os_code != var.os_code_windows && fileexists(local.cloud_init_file)  ? data.template_file.cloudconfig[each.key].rendered : null)
+    custom_data    = (var.os_code != var.os_code_windows && fileexists(local.cloud_init_file) ? data.template_file.cloudconfig[each.key].rendered : null)
   }
 
   dynamic "boot_diagnostics" {
@@ -72,13 +72,13 @@ resource "azurerm_virtual_machine" "vm" {
     content {
       enabled     = true
       storage_uri = azurerm_storage_account.diag_storage_account.0.primary_blob_endpoint
-  }
+    }
   }
 
 
   provisioner "local-exec" {
-    command     = "echo '${format("%s%s%s", each.value.full_name, " ", (var.os_code == var.os_code_windows ? random_password.vm_password[each.key].result : "ssh_only"))}'"
-  
+    command = "echo '${format("%s%s%s", each.value.full_name, " ", (var.os_code == var.os_code_windows ? random_password.vm_password[each.key].result : "ssh_only"))}'"
+
     interpreter = ["/bin/bash", "-c"]
   }
 }

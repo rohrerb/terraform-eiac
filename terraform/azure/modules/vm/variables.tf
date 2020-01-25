@@ -98,6 +98,6 @@ variable "number_of_zones" {
 }
 
 variable "cloud_init_vars" {
-  type = map
+  type    = map
   default = null
 }

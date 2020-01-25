@@ -46,11 +46,11 @@ module "lngx" {
   vm_generic_map  = local.vm_generic_map
   vm_instance_map = local.lngx_instance_map
 
-  os_code       = var.os_code_linux
-  instance_type = "ngx"
+  os_code                = var.os_code_linux
+  instance_type          = "ngx"
   number_of_vms_in_avset = local.lngx_count
-  resource_group_name = module.rg-dmz.name
-  os_disk_image_id    = data.azurerm_image.ubuntu.id
+  resource_group_name    = module.rg-dmz.name
+  os_disk_image_id       = data.azurerm_image.ubuntu.id
 
   subnet_id                 = azurerm_subnet.subnet["DMZ"].id
   network_security_group_id = local.lngx_count == 0 ? "" : module.lngx-nsg.id

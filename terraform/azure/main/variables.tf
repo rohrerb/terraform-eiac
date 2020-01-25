@@ -96,8 +96,8 @@ variable "enable_bastion" {
 }
 
 variable "deploy_using_zones" {
-    type    = bool
-  default = false
+  type        = bool
+  default     = false
   description = "If Enabled the VMs will be spread accros Availability Zones vs Availability Sets."
 }
 

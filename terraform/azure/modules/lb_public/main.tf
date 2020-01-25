@@ -7,7 +7,7 @@ resource "azurerm_public_ip" "lb-pip" {
   allocation_method   = "Static"
   sku                 = var.sku
 
-  domain_name_label   = format("%s%s-%s", var.full_env_code, var.name, "lb-pip")
+  domain_name_label = format("%s%s-%s", var.full_env_code, var.name, "lb-pip")
 }
 
 resource "azurerm_lb" "lb" {

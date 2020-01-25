@@ -28,7 +28,7 @@ module "lsql-nsg-rules" {
 
 #SA Password should be changed once VM is stood up and configured.
 resource "random_password" "lsql_sa_password" {
-  count = signum(length(local.lsql_instance_map) > 0 ? 1 : 0)
+  count = signum(local.lsql_count) == 0 ? 0 : 1
 
   length  = 16
   special = true
@@ -50,6 +50,6 @@ module "lsql" {
   network_security_group_id = local.lsql_count == 0 ? "" : module.lsql-nsg.id
 
   cloud_init_vars = {
-      sa_password = random_password.lsql_sa_password.*.result[0]
+    sa_password = signum(local.lsql_count) == 0 ? null : random_password.lsql_sa_password.*.result[0]
   }
 }
