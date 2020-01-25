@@ -1,4 +1,4 @@
-subscription_id = "7d559a72-c8b6-4d07-9ec0-5ca5b14a25e7"
+subscription_id = ""
 enable_remote_state = false
 
 environment_code        = "d"

@@ -182,6 +182,7 @@ def initialize_terraform():
 
     if ARGS.cloud == 'azure':
         subscription_id = get_terraform_variable(VARS_PATH, 'subscription_id')
+        if subscription_id == '': subscription_id = get_terraform_variable(SECRETS_PATH, 'subscription_id')
         is_azure_government = get_terraform_variable(VARS_PATH, 'is_azure_government')
         ENABLE_REMOTE_STATE = get_terraform_variable(VARS_PATH, 'enable_remote_state')
 

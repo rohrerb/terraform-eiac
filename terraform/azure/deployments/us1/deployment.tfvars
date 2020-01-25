@@ -1,4 +1,4 @@
-subscription_id = "75406810-f3e6-42fa-97c6-e9027e0a0a45"
+subscription_id = ""
 
 is_azure_government = true
 enable_remote_state = false
@@ -16,7 +16,7 @@ platform_fault_domain_count = 2
 network_octets           = "10.1"
 network_octets_secondary = "10.2"
 
-enable_secondary         = true
+enable_secondary         = false
 enable_recovery_services = false
 
 dns_servers = []
