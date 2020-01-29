@@ -27,21 +27,25 @@ write_files:
           var Connection = require('tedious').Connection;
 
           var config = {
-              server: 'dus2ea1lsql001.eastus.cloudapp.azure.com', //update me
+              server: '${sql_ip_address}', //update me
               authentication: {
                   type: 'default',
                   options: {
                       userName: 'sa', //update me
-                      password: 'hf5[8:18=lqx}xBT' //update me
+                      password: '${sql_sa_password}' //update me
                   }
               }
           };
 
           var connection = new Connection(config);
           connection.on('connect', function (err) {
-              // If no error, then good to proceed.  
-              console.log("Connected");
-              executeStatement();
+              if (err) {
+                  console.log(err);
+              }  
+              else    {  
+                console.log("Connected");
+                executeStatement();
+              }
           });
 
           var Request = require('tedious').Request;
@@ -68,9 +72,6 @@ write_files:
 
               connection.execSql(request);
           }
-
-
-
       });
       app.listen(3000, function () {
           console.log('Hello world app listening on port 3000!')
@@ -83,6 +84,7 @@ runcmd:
   - npm init
   - npm install express -y
   - npm install tedious -y
-  - nodejs index.js
+  - npm install -g pm2 -y
+  - pm2 start /home/${admin_username}/myapp/index.js
 
 

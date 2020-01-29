@@ -101,8 +101,12 @@ variable "deploy_using_zones" {
   description = "If Enabled the VMs will be spread accros Availability Zones vs Availability Sets."
 }
 
-
 variable "ssh_key_path" {
   type    = string
   default = "~/.ssh/id_rsa.pub"
+}
+
+variable "admin_username" {
+  description = "Window / Linux Administrator account (can't be administrator)"
+  default     = "cadmin"
 }

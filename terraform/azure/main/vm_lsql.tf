@@ -26,12 +26,27 @@ module "lsql-nsg-rules" {
   }
 }
 
+module "lsql-lb" {
+  source              = "../modules/lb_private"
+  name                = "lsql"
+  full_env_code       = local.full_env_code
+  create              = (signum(local.lsql_count) == 0 ? false : true)
+  sku                 = "Basic"
+  location            = var.location
+  resource_group_name = module.rg-data.name
+  subnet_id           = azurerm_subnet.subnet["Data"].id
+  port                = 1433
+  probe_port          = 1433
+  timeout             = 4
+}
+
 #SA Password should be changed once VM is stood up and configured.
 resource "random_password" "lsql_sa_password" {
   count = signum(local.lsql_count) == 0 ? 0 : 1
 
   length  = 16
-  special = true
+  special = false
+  override_special = "!#-_=+"
 }
 
 module "lsql" {
@@ -48,6 +63,9 @@ module "lsql" {
 
   subnet_id                 = azurerm_subnet.subnet["Data"].id
   network_security_group_id = local.lsql_count == 0 ? "" : module.lsql-nsg.id
+
+  enable_internal_lb               = local.lsql_count == 0 ? false : true
+  backend_address_pool_id_internal = module.lsql-lb.backend_pool_id
 
   cloud_init_vars = {
     sa_password = signum(local.lsql_count) == 0 ? null : random_password.lsql_sa_password.*.result[0]

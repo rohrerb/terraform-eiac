@@ -22,7 +22,7 @@ module "lngx-nsg-rules" {
   location                    = var.location
   rules_map = {
     http_inbound   = { priority = 150, direction = "Inbound", access = "Allow", protocol = "TCP", destination_port_range = "80" },
-    https_outbound = { priority = 151, direction = "Inbound", access = "Allow", protocol = "TCP", destination_port_range = "443" }
+    https_inbound = { priority = 151, direction = "Inbound", access = "Allow", protocol = "TCP", destination_port_range = "443" }
   }
 }
 
@@ -58,4 +58,9 @@ module "lngx" {
   enable_external_lb               = local.lngx_count == 0 ? false : true
   backend_address_pool_id_external = module.lngx-lb.backend_pool_id
 
+  cloud_init_vars = {
+    admin_username = var.admin_username
+    sql_ip_address = signum(local.lsql_count) == 0 ? null : module.lsql-lb.private_ip_address
+    sql_sa_password = signum(local.lsql_count) == 0 ? null : random_password.lsql_sa_password.*.result[0]
+  }
 }

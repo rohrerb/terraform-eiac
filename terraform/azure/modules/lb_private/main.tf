@@ -1,7 +1,7 @@
 
 
 resource "azurerm_lb" "lb" {
-  name                = format("%s-%s-%s", var.full_env_code, var.name, "lb")
+  name                = format("%s%s-%s", var.full_env_code, var.name, "lb")
   count               = (var.create ? 1 : 0)
   sku                 = var.sku
   resource_group_name = var.resource_group_name

@@ -12,7 +12,7 @@ runcmd:
   - sudo apt-get update
 
   - echo Installing SQL Server...
-  - sudo apt-get install -y mssql-server
+  - sudo apt-get install mssql-server -y
 
   - echo Running mssql-conf setup...
   - sudo MSSQL_SA_PASSWORD="${sa_password}" MSSQL_PID="express" /opt/mssql/bin/mssql-conf -n setup accept-eula
@@ -33,4 +33,3 @@ runcmd:
   - echo PATH="$PATH:/opt/mssql-tools/bin" >> ~/.bash_profile
   - echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
   - source ~/.bashrc
-
