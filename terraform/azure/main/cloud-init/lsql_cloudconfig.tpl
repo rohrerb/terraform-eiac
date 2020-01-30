@@ -3,6 +3,7 @@ package_upgrade: true
 packages:
 runcmd:
   # Can monitor by using tail -f /var/log/cloud-init-output.log
+  # SQL Packages > https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-change-repo?view=sql-server-2017&pivots=ld2-ubuntu#cuversusgdr
   - echo Adding Microsoft repositories...
   - sudo curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
   - sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-2019.list)"
