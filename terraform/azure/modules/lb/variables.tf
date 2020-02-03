@@ -2,6 +2,7 @@ variable "name" {
   description = "Name of load balancer"
 }
 
+
 variable "sku" {
   description = "Azure SKU - {basic, standard}"
   default     = "Basic"
@@ -23,6 +24,7 @@ variable "probe_port" {
   description = "Probe port."
 }
 
+/*
 variable "port" {
   description = "Port for both front and back ends"
 }
@@ -44,12 +46,29 @@ variable "timeout" {
 variable "protocol" {
   description = "Protocol (All Tcp Udp)"
   default     = "TCP"
-}
+}*/
 
 variable "full_env_code" {
   description = "Environment, Deployment, Location code"
 }
 
+variable "private_ip_address_allocation" {
+  default = "dynamic"
+}
+
 variable "create" {
   default = false
+}
+
+variable "is_public" {
+  default = false
+}
+
+variable "rules_map" {
+  type    = map
+  default = {}
+  /*
+    {
+     }
+*/
 }

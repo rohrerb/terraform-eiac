@@ -27,17 +27,20 @@ module "lngx-nsg-rules" {
 }
 
 module "lngx-lb" {
-  source              = "../modules/lb_public"
+  source              = "../modules/lb"
   name                = "lngx"
   full_env_code       = local.full_env_code
   create              = (signum(local.lngx_count) == 0 ? false : true)
+  is_public           = true
   sku                 = "Standard"
   location            = var.location
   resource_group_name = module.rg-dmz.name
-  subnet_id           = azurerm_subnet.subnet["DMZ"].id
-  port                = 80
+  subnet_id           = azurerm_subnet.subnet["dmz"].id
   probe_port          = 80
-  timeout             = 4
+
+  rules_map = {
+    http_rule = { protocol = "TCP", frontend_port = 80, backend_port = 80, public_frontend = true  }
+  }
 }
 
 module "lngx" {
@@ -52,15 +55,13 @@ module "lngx" {
   resource_group_name    = module.rg-dmz.name
   os_disk_image_id       = data.azurerm_image.ubuntu.id
 
-  subnet_id                 = azurerm_subnet.subnet["DMZ"].id
+  subnet_id                 = azurerm_subnet.subnet["dmz"].id
   network_security_group_id = local.lngx_count == 0 ? "" : module.lngx-nsg.id
 
   enable_external_lb               = local.lngx_count == 0 ? false : true
   backend_address_pool_id_external = module.lngx-lb.backend_pool_id
 
   cloud_init_vars = {
-    admin_username = var.admin_username
-    sql_ip_address = signum(local.lsql_count) == 0 ? null : module.lsql-lb.private_ip_address
-    sql_sa_password = signum(local.lsql_count) == 0 ? null : random_password.lsql_sa_password.*.result[0]
+    njs_ip_address = signum(local.lnjs_count) == 0 ? null : module.lnjs-lb.private_ip_address
   }
 }

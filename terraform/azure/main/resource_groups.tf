@@ -7,6 +7,15 @@ module "rg-dmz" {
   enable_delete_lock = false
 }
 
+module "rg-app" {
+  source             = "../modules/resource_group"
+  name_suffix        = "app"
+  location           = var.location
+  full_env_code      = local.full_env_code
+  create             = true
+  enable_delete_lock = false
+}
+
 module "rg-services" {
   source             = "../modules/resource_group"
   name_suffix        = "services"

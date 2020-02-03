@@ -18,11 +18,18 @@ enable_recovery_services = false
 enable_bastion     = true
 deploy_using_zones = true
 
-dns_servers = []
-
 vm_instance_maps = {
-  lngx = { count = 0, size = "Standard_D2s_v3", os_disk_size = 30, enable_recovery = false, enable_public_ip = false, enable_vm_diagnostics = false }
-  lsql = { count = 1, size = "Standard_D2s_v3", os_disk_size = 30, data_disk_count = 0, data_disk_size = 5, enable_public_ip = false }
+  #Squid Proxy
+  lsqd = { count = 1, size = "Standard_D2s_v3", os_disk_size = 30, data_disk_count = 0, data_disk_size = 0, enable_recovery = false, enable_public_ip = false, enable_vm_diagnostics = false }
+
+  #Nginx
+  lngx = { count = 1, size = "Standard_D2s_v3", os_disk_size = 30, data_disk_count = 0, data_disk_size = 0, enable_recovery = false, enable_public_ip = false, enable_vm_diagnostics = false }
+  
+  #NodeJS
+  lnjs = { count = 1, size = "Standard_D2s_v3", os_disk_size = 30, data_disk_count = 0, data_disk_size = 0, enable_recovery = false, enable_public_ip = false, enable_vm_diagnostics = false }
+  
+  #SQL(linux)
+  lsql = { count = 1, size = "Standard_D2s_v3", os_disk_size = 30, data_disk_count = 0, data_disk_size = 0, enable_recovery = false, enable_public_ip = false, enable_vm_diagnostics = false }
 }
 
 

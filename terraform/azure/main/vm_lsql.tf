@@ -27,17 +27,20 @@ module "lsql-nsg-rules" {
 }
 
 module "lsql-lb" {
-  source              = "../modules/lb_private"
+  source              = "../modules/lb"
   name                = "lsql"
   full_env_code       = local.full_env_code
   create              = (signum(local.lsql_count) == 0 ? false : true)
-  sku                 = "Basic"
+  is_public           = false
+  sku                 = "Standard"
   location            = var.location
   resource_group_name = module.rg-data.name
-  subnet_id           = azurerm_subnet.subnet["Data"].id
-  port                = 1433
-  probe_port          = 1433
-  timeout             = 4
+  subnet_id           = azurerm_subnet.subnet["data"].id
+  probe_port          = 1443
+
+  rules_map = {
+    http_rule = { protocol = "TCP", frontend_port = 1433, backend_port = 1433 }
+  }
 }
 
 #SA Password should be changed once VM is stood up and configured.
@@ -61,7 +64,7 @@ module "lsql" {
   resource_group_name = module.rg-data.name
   os_disk_image_id    = data.azurerm_image.ubuntu.id
 
-  subnet_id                 = azurerm_subnet.subnet["Data"].id
+  subnet_id                 = azurerm_subnet.subnet["data"].id
   network_security_group_id = local.lsql_count == 0 ? "" : module.lsql-nsg.id
 
   enable_internal_lb               = local.lsql_count == 0 ? false : true

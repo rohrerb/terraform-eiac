@@ -1,1 +1,1 @@
-{"cloud_environment_name":"Public","location":"East US","resource_group":"dus2ea1-packer","subscription_id":"7d559a72-c8b6-4d07-9ec0-5ca5b14a25e7"}
+{"cloud_environment_name":"Public","location":"East US","proxy":"lsqd.pz.io","resource_group":"dus2ea1-packer","subscription_id":"7d559a72-c8b6-4d07-9ec0-5ca5b14a25e7","virtual_network_name":"dus2ea1-net","virtual_network_resource_group_name":"dus2ea1-network","virtual_network_subnet_name":"management"}

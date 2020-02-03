@@ -16,10 +16,10 @@ resource "azurerm_virtual_machine" "vm" {
     prevent_destroy = false
 
     ignore_changes = [
-      os_profile
+      os_profile,
+      storage_image_reference
     ]
   }
-
 
   storage_image_reference {
     id = var.os_disk_image_id

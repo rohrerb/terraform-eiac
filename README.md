@@ -1,6 +1,6 @@
 
 ### Azure Setup
-With the cloud environment set use `az login` to authenticate with your own credentials and MFA before running Terraform. `deploy.py` will automatically figure out the rest.
+With the cloud environment set use `az login` to authenticate with your own credentials and MFA before running Terraform. `./deploy.py` will automatically figure out the rest.
 
 
 ### Usage
@@ -75,34 +75,34 @@ optional packer commands:
 #### Common Terraform Commands:
 
 ###### plan
-`deploy.py -d us1`
+`./deploy.py -d us1`
 
 ###### apply
-`deploy.py -d us1 -a apply`
+`./deploy.py -d us1 -a apply`
 
 ###### apply w/target
-`deploy.py -d us1 -a apply -t module.rg-test.azurerm_resource_group.rg[0]`
+`./deploy.py -d us1 -a apply -t module.rg-test.azurerm_resource_group.rg[0]`
 
 ###### apply w/target(s)
-`deploy.py -d us1 -a apply -t module.rg-test.azurerm_resource_group.rg[0] -t module.rg-test.azurerm_resource_group.rg["test"]`
+`./deploy.py -d us1 -a apply -t module.rg-test.azurerm_resource_group.rg[0] -t module.rg-test.azurerm_resource_group.rg["test"]`
 
 ###### apply w/target against a tf file.  
-`deploy.py -d us1  -t resource_groups.tf`
+`./deploy.py -d us1  -t resource_groups.tf`
 
 ###### state remove
-`deploy.py -d us1 -a state rm -t module.rg-test.azurerm_resource_group.rg[0]`
+`./deploy.py -d us1 -a state rm -t module.rg-test.azurerm_resource_group.rg[0]`
 
 ###### state mv
-`deploy.py -d us1 -a state mv -t module.rg-test.azurerm_resource_group.rg[0] -t module.rg-test2.azurerm_resource_group.rg[0]`
+`./deploy.py -d us1 -a state mv -t module.rg-test.azurerm_resource_group.rg[0] -t module.rg-test2.azurerm_resource_group.rg[0]`
 
 ###### import
-`deploy.py -d us1 -a import -t module.rg-test.azurerm_resource_group.rg[0] -r /subscriptions/75406810-f3e6-42fa-97c6-e9027e0a0a45/resourceGroups/DUS1VA1-test`
+`./deploy.py -d us1 -a import -t module.rg-test.azurerm_resource_group.rg[0] -r /subscriptions/75406810-f3e6-42fa-97c6-e9027e0a0a45/resourceGroups/DUS1VA1-test`
 
 ###### taint
-`deploy.py -d us1 -a taint -t null_resource.image`
+`./deploy.py -d us1 -a taint -t null_resource.image`
 
 ###### untaint
-`deploy.py -d us1 -a untaint -t null_resource.image`
+`./deploy.py -d us1 -a untaint -t null_resource.image`
 
 ##### unlock a remote state file
 If you receive this message you can unlock using the below command. Grab the *ID* under *Lock Info:*
@@ -120,16 +120,16 @@ Lock Info:
   Info:    
 ```
 
-`deploy.py -d us1 --unlock_state 047c2e42-69b7-4006-68a5-573ad93a769a`
+`./deploy.py -d us1 --unlock_state 047c2e42-69b7-4006-68a5-573ad93a769a`
 
 
 #### Common Packer Commands:
 
 ###### build ubuntu
-`deploy.py -p -po ubuntu -d us1`
+`./deploy.py -p -po ubuntu -d us1`
 
 ###### build centos
-`deploy.py -p -po centos -d us1`
+`./deploy.py -p -po centos -d us1`
 
 ###### build windows
-`deploy.py -p -po windows -d us1`
+`./deploy.py -p -po windows -d us1`

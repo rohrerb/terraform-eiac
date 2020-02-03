@@ -36,10 +36,11 @@ variable "subnet" {
   type = map
 
   default = {
-    "DMZ"                = { subnet_octet = "0", service_endpoints = [] }
-    "Services"           = { subnet_octet = "1", service_endpoints = [] }
-    "Data"               = { subnet_octet = "2", service_endpoints = [] }
-    "Management"         = { subnet_octet = "3", service_endpoints = [] }
+    "dmz"                = { subnet_octet = "0", service_endpoints = [] }
+    "services"           = { subnet_octet = "1", service_endpoints = [] }
+    "data"               = { subnet_octet = "2", service_endpoints = [] }
+    "management"         = { subnet_octet = "3", service_endpoints = [] }
+    "app"                = { subnet_octet = "4", service_endpoints = [] }
     "AzureBastionSubnet" = { subnet_octet = "9", service_endpoints = [] }
   }
 }

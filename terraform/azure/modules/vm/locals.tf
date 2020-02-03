@@ -6,6 +6,8 @@ locals {
   location                    = var.vm_generic_map.location
   location_secondary          = var.vm_generic_map.location_secondary
   deploy_using_zones          = var.vm_generic_map.deploy_using_zones
+  dns_zone_name               = var.vm_generic_map.dns_zone_name
+  network_resource_group      = var.vm_generic_map.network_resource_group
   recovery_services_map       = jsondecode(var.vm_generic_map.recovery_services_map)
 
   base_hostname         = format("%s%s%s", local.full_env_code, var.os_code, var.instance_type)
