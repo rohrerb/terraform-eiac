@@ -7,5 +7,5 @@ module "bastion" {
 
   location            = var.location
   resource_group_name = module.rg-network.name
-  subnet_id           = azurerm_subnet.subnet["AzureBastionSubnet"].id
+  subnet_id           = local.subnet_id_bastion
 }

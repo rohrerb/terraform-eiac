@@ -28,7 +28,7 @@
       "os_type": "Linux",
       "image_publisher": "Canonical",
       "image_offer": "UbuntuServer",
-      "image_sku": "16.04-LTS",
+      "image_sku": "18.04-LTS",
 
       "location": "{{user `location`}}",
       "vm_size": "Standard_DS1_v2",
@@ -48,7 +48,6 @@
     "inline": [
       "apt-get update",
       "apt-get upgrade -y",
-      "apt-get -y install nginx",
       "/tmp/set_proxy.sh {{user `proxy`}}"
     ],
     "inline_shebang": "/bin/sh -x"

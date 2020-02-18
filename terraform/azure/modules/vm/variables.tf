@@ -88,7 +88,7 @@ variable "os_code_windows" {
   default     = "w"
 }
 
-variable "vm_generic_map" {
+variable "dep_generic_map" {
   type    = map
   default = {}
 }

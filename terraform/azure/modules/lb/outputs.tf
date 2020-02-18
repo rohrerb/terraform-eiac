@@ -6,3 +6,8 @@ output "backend_pool_id" {
 output "private_ip_address" {
   value = element(concat(azurerm_lb.lb.*.private_ip_address, list("")), 0)
 }
+
+output "dns" {
+  value = (var.is_public ? element(concat(azurerm_public_ip.lb-pip.*.domain_name_label, list("")), 0)
+  : element(concat(azurerm_private_dns_a_record.dns-a-record.*.name, list("")), 0))
+}

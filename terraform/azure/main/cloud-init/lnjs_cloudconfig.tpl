@@ -12,11 +12,11 @@ write_files:
           var Connection = require('tedious').Connection;
 
           var config = {
-              server: '${sql_ip_address}', //update me
+              server: '${sql_dns}', //update me
               authentication: {
                   type: 'default',
                   options: {
-                      userName: 'sa', //update me
+                      userName: '${sql_sa_user}', //update me
                       password: '${sql_sa_password}' //update me
                   }
               }
@@ -62,13 +62,16 @@ write_files:
           console.log('Hello world app listening on port 3000!')
       })
 runcmd:
-  - cd "/home/${admin_username}/myapp"
-  - curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+  - sudo curl -sL https://deb.nodesource.com/setup_13.x | sudo bash -
   - sudo apt install nodejs -y
-  - npm init
-  - npm install express -y
-  - npm install tedious -y
-  - npm install -g pm2 -y
-  - pm2 start /home/${admin_username}/myapp/index.js
+  - sudo npm config set proxy http://${proxy}:3128/
+  - sudo npm config set https-proxy http://${proxy}:3128/
+  - cd "/home/${admin_username}/myapp"
+  #- npm init
+  - sudo npm install express -y
+  - sudo npm install tedious -y
+  - sudo npm install -g pm2 -y
+  - sudo pm2 start /home/${admin_username}/myapp/index.js
+  - sudo pm2 startup
 
 

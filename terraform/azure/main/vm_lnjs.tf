@@ -21,20 +21,19 @@ module "lnjs-nsg-rules" {
   network_security_group_name = module.lnjs-nsg.name
   location                    = var.location
   rules_map = {
-    http_inbound   = { priority = 150, direction = "Inbound", access = "Allow", protocol = "TCP", destination_port_range = "3000" },
+    http_inbound = { priority = 150, direction = "Inbound", access = "Allow", protocol = "TCP", destination_port_range = "3000" },
   }
 }
 
 module "lnjs-lb" {
   source              = "../modules/lb"
   name                = "lnjs"
-  full_env_code       = local.full_env_code
+  dep_generic_map     = local.dep_generic_map
   create              = (signum(local.lnjs_count) == 0 ? false : true)
   is_public           = false
   sku                 = "Standard"
-  location            = var.location
   resource_group_name = module.rg-app.name
-  subnet_id           = azurerm_subnet.subnet["app"].id
+  subnet_id           = local.subnet_id_app
   probe_port          = 3000
 
   rules_map = {
@@ -45,7 +44,7 @@ module "lnjs-lb" {
 module "lnjs" {
   source = "../modules/vm"
 
-  vm_generic_map  = local.vm_generic_map
+  dep_generic_map = local.dep_generic_map
   vm_instance_map = local.lnjs_instance_map
 
   os_code                = var.os_code_linux
@@ -54,15 +53,17 @@ module "lnjs" {
   resource_group_name    = module.rg-app.name
   os_disk_image_id       = data.azurerm_image.ubuntu.id
 
-  subnet_id                 = azurerm_subnet.subnet["app"].id
+  subnet_id                 = local.subnet_id_app
   network_security_group_id = local.lnjs_count == 0 ? "" : module.lnjs-nsg.id
 
   enable_internal_lb               = local.lnjs_count == 0 ? false : true
   backend_address_pool_id_internal = module.lnjs-lb.backend_pool_id
 
   cloud_init_vars = {
-    admin_username = var.admin_username
-    sql_ip_address = signum(local.lsql_count) == 0 ? null : module.lsql-lb.private_ip_address
-    sql_sa_password = signum(local.lsql_count) == 0 ? null : random_password.lsql_sa_password.*.result[0]
+    admin_username  = var.admin_username
+    sql_dns         = local.main_sql_config_map.deploy ? module.sql_server-main.dns : null
+    sql_sa_password = local.main_sql_config_map.deploy ? module.sql_server-main.password : null
+    sql_sa_user     = local.main_sql_config_map.deploy ? local.main_sql_config_map.admin_user : null
+    proxy           = local.proxy
   }
 }

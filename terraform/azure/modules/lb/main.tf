@@ -1,25 +1,25 @@
 
 
 resource "azurerm_lb" "lb" {
-  name                = format("%s%s-%s", var.full_env_code, var.name, "lb")
+  name                = format("%s%s-%s", local.full_env_code, var.name, "lb")
   count               = (local.enable ? 1 : 0)
   sku                 = var.sku
   resource_group_name = var.resource_group_name
-  location            = var.location
+  location            = local.location
 
   dynamic "frontend_ip_configuration" {
     for_each = { for o in range(0, 1) : o => o
     if var.is_public }
 
     content {
-      name                      = local.frontend_ip_configuration_name
-      public_ip_address_id      = azurerm_public_ip.lb-pip.*.id[0]
+      name                 = local.frontend_ip_configuration_name
+      public_ip_address_id = azurerm_public_ip.lb-pip.*.id[0]
     }
   }
 
   dynamic "frontend_ip_configuration" {
     for_each = { for o in range(0, 1) : o => o
-    if !var.is_public }
+    if ! var.is_public }
 
     content {
       name                          = local.frontend_ip_configuration_name
@@ -31,13 +31,13 @@ resource "azurerm_lb" "lb" {
 
 resource "azurerm_public_ip" "lb-pip" {
   count               = (var.is_public ? 1 : 0)
-  name                = format("%s%s-%s", var.full_env_code, var.name, "lb-pip")
-  location            = var.location
+  name                = format("%s%s-%s", local.full_env_code, var.name, "lb-pip")
+  location            = local.location
   resource_group_name = var.resource_group_name
   allocation_method   = "Static"
   sku                 = var.sku
 
-  domain_name_label = format("%s%s-%s", var.full_env_code, var.name, "lb-pip")
+  domain_name_label = format("%s%s-%s", local.full_env_code, var.name, "lb-pip")
 }
 
 

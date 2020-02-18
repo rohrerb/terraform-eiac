@@ -1,14 +1,17 @@
 locals {
 
-  platform_fault_domain_count = var.vm_generic_map.platform_fault_domain_count
-  full_env_code               = var.vm_generic_map.full_env_code
-  ssh_key_path                = var.vm_generic_map.ssh_key_path
-  location                    = var.vm_generic_map.location
-  location_secondary          = var.vm_generic_map.location_secondary
-  deploy_using_zones          = var.vm_generic_map.deploy_using_zones
-  dns_zone_name               = var.vm_generic_map.dns_zone_name
-  network_resource_group      = var.vm_generic_map.network_resource_group
-  recovery_services_map       = jsondecode(var.vm_generic_map.recovery_services_map)
+  platform_fault_domain_count = var.dep_generic_map.platform_fault_domain_count
+  full_env_code               = var.dep_generic_map.full_env_code
+  ssh_key_path                = var.dep_generic_map.ssh_key_path
+  location                    = var.dep_generic_map.location
+  location_secondary          = var.dep_generic_map.location_secondary
+  deploy_using_zones          = var.dep_generic_map.deploy_using_zones
+  dns_zone_name               = var.dep_generic_map.dns_zone_name
+  network_resource_group      = var.dep_generic_map.network_resource_group
+  recovery_services_map       = jsondecode(var.dep_generic_map.recovery_services_map)
+  enable_log_analytics        = var.dep_generic_map.enable_log_analytics
+  log_analytics_worspace_id   = var.dep_generic_map.log_analytics_worspace_id
+  log_analytics_worspace_key  = var.dep_generic_map.log_analytics_worspace_key
 
   base_hostname         = format("%s%s%s", local.full_env_code, var.os_code, var.instance_type)
   instance_count        = tonumber(var.vm_instance_map.count)
