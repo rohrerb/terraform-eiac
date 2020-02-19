@@ -36,10 +36,11 @@ variable "subnet" {
   type = map
 
   default = {
-    "DMZ"                = { subnet_octet = "0", service_endpoints = [] }
-    "Services"           = { subnet_octet = "1", service_endpoints = [] }
-    "Data"               = { subnet_octet = "2", service_endpoints = [] }
-    "Management"         = { subnet_octet = "3", service_endpoints = [] }
+    "dmz"                = { subnet_octet = "0", service_endpoints = [] }
+    "services"           = { subnet_octet = "1", service_endpoints = [] }
+    "data"               = { subnet_octet = "2", service_endpoints = [] }
+    "management"         = { subnet_octet = "3", service_endpoints = [] }
+    "app"                = { subnet_octet = "4", service_endpoints = ["Microsoft.Sql"] }
     "AzureBastionSubnet" = { subnet_octet = "9", service_endpoints = [] }
   }
 }
@@ -72,6 +73,10 @@ variable "enable_secondary" {
   default = false
 }
 
+variable "enable_log_analytics" {
+  default = false
+}
+
 variable "vm_instance_maps" {
   type = map
 }
@@ -96,13 +101,28 @@ variable "enable_bastion" {
 }
 
 variable "deploy_using_zones" {
-    type    = bool
-  default = false
+  type        = bool
+  default     = false
   description = "If Enabled the VMs will be spread accros Availability Zones vs Availability Sets."
 }
-
 
 variable "ssh_key_path" {
   type    = string
   default = "~/.ssh/id_rsa.pub"
+}
+
+variable "admin_username" {
+  description = "Window / Linux Administrator account (can't be administrator)"
+  default     = "cadmin"
+}
+
+variable "log_analytics_location_override" {
+  description = "Alternate location to deploy log analytics if not available in primary region."
+  default     = null
+}
+
+
+variable "sql_config_map" {
+  type    = map
+  default = {}
 }

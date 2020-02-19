@@ -4,7 +4,12 @@
     "resource_group": "",
     "subscription_id": "",
     "location": "",
-    "cloud_environment_name": "Public"
+    "proxy": "",
+    "cloud_environment_name": "Public",
+    "virtual_network_name" : "",
+    "virtual_network_subnet_name" : "",
+    "virtual_network_resource_group_name" : ""
+
   },
   "builders": [
     {
@@ -15,10 +20,15 @@
       "managed_image_name": "Ubuntu_{{isotime \"2006_01_02_15_04\"}}",
       "managed_image_storage_account_type": "Premium_LRS",
       
+      "private_virtual_network_with_public_ip" : true,
+      "virtual_network_name" : "{{user `virtual_network_name`}}",
+      "virtual_network_subnet_name" : "{{user `virtual_network_subnet_name`}}",
+      "virtual_network_resource_group_name" : "{{user `virtual_network_resource_group_name`}}",
+
       "os_type": "Linux",
       "image_publisher": "Canonical",
       "image_offer": "UbuntuServer",
-      "image_sku": "16.04-LTS",
+      "image_sku": "18.04-LTS",
 
       "location": "{{user `location`}}",
       "vm_size": "Standard_DS1_v2",
@@ -26,17 +36,27 @@
       "async_resourcegroup_delete": true
     }
   ],
-  "provisioners": [{
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "azure/packer/scripts/set_proxy.sh",
+      "destination": "/tmp/set_proxy.sh"
+    },
+    {
+    "type": "shell",
     "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
     "inline": [
       "apt-get update",
       "apt-get upgrade -y",
-      "apt-get -y install nginx",
-
-      "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
+      "/tmp/set_proxy.sh {{user `proxy`}}"
     ],
-    "inline_shebang": "/bin/sh -x",
-    "type": "shell"
+    "inline_shebang": "/bin/sh -x"
+  },
+  {
+    "type": "shell",
+    "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+    "inline": ["/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"],
+    "inline_shebang": "/bin/sh -x"
   }]
 }
 

@@ -74,3 +74,4 @@ resource "azurerm_network_watcher" "watcher_secondary" {
   location            = var.location_secondary
   resource_group_name = module.rg-network-secondary.name
 }
+
