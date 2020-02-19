@@ -11,6 +11,9 @@ import datetime
 import time
 from colorama import Fore, Style
 
+REMOTE_STATE_BYPASS = False
+UPLOAD_STATE_TO_REMOTE = False
+
 VARS_PATH = ''
 SECRETS_PATH = ''
 TF_STATE = ''
@@ -195,7 +198,7 @@ def initialize_terraform():
         run_command(['az', 'cloud', 'set', '--name', azure_cloud])
         run_command(['az', 'account', 'set', '-s', subscription_id])
 
-        if ENABLE_REMOTE_STATE == 'true':
+        if ENABLE_REMOTE_STATE == 'true' and not REMOTE_STATE_BYPASS:
             print('Start remote state engine... Will take a few seconds...')
 
             switch_backend_type('azurerm')
@@ -205,7 +208,13 @@ def initialize_terraform():
 
             resource_group = run_command_with_result(['az', 'group', 'list', '--query', '[?name==\'{}\'].name'.format(terrform_resourcegroup_name), '--output', 'tsv'])
             os.environ["STORAGE_ACCOUNT"] = run_command_with_result(['az', 'storage', 'account', 'list', '--query', '[?contains(name,\'{}\')].name'.format(terrform_storage_name), '--output', 'tsv'])
-            os.environ["ARM_ACCESS_KEY"] = run_command_with_result(['az', 'storage', 'account', 'keys', 'list', '-g', '{}'.format(resource_group), '-n', os.environ.get("STORAGE_ACCOUNT"), '--query', '[?permissions == \'Full\']|[0].value', '--output', 'tsv'])
+            account_key = run_command_with_result(['az', 'storage', 'account', 'keys', 'list', '-g', '{}'.format(resource_group), '-n', os.environ.get("STORAGE_ACCOUNT"), '--query', '[?permissions == \'Full\']|[0].value', '--output', 'tsv'], show_output=False)
+            os.environ["ARM_ACCESS_KEY"] = account_key
+
+            if UPLOAD_STATE_TO_REMOTE:
+                print(Fore.GREEN + 'Uploading State file to Remote State Container...')
+                run_command(['az', 'storage', 'blob', 'upload', '-f', os.path.join(DEPLOYMENT_PATH, 'state', ARGS.section, 'terraform.tfstate'), '-c', 'main', '-n', 'terraform.tfstate', '--account-name', terrform_storage_name, '--account-key', account_key], show_output=True)
+                print(Style.RESET_ALL)
 
             if is_azure_government:
                 backend_configs.append('-backend-config=environment=usgovernment') # azurerm backend defaults to Azure Commercial Cloud
@@ -289,6 +298,8 @@ def run_terraform():
 
         if ENABLE_REMOTE_STATE != 'true':
             command_list.append('-state=' + TF_STATE)
+        elif REMOTE_STATE_BYPASS:
+            command_list.append('-state=' + TF_STATE)
 
         command_list.append('-var-file=' + VARS_PATH)
 
@@ -301,7 +312,7 @@ def snapshot_terraform_state():
     """Takes a snapshot of the state prior to any state changes."""
     if ARGS.state_snapshot and ARGS.action != 'plan':
         print('Taking state snapshot')
-        if ENABLE_REMOTE_STATE == 'true':
+        if ENABLE_REMOTE_STATE == 'true' and not REMOTE_STATE_BYPASS:
             if ARGS.cloud == "azure":
                 #Lifecycle management takes care of removing snapshots
                 run_command(['az', 'storage', 'blob', 'snapshot', '--account-name', os.environ.get("STORAGE_ACCOUNT"), '--account-key', os.environ.get("ARM_ACCESS_KEY"), '--container-name', ARGS.section, '--name', 'terraform.tfstate'], show_command=False)
