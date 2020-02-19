@@ -1,3 +1,5 @@
+### Detailed blog on this repo
+https://techcommunity.microsoft.com/t5/azure-developer-community-blog/structuring-infrastructure-as-code-for-the-enterprise-using/ba-p/1179536
 
 ### Azure Setup
 With the cloud environment set use `az login` to authenticate with your own credentials and MFA before running Terraform. `./deploy.py` will automatically figure out the rest.
