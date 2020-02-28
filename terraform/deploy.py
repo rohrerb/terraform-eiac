@@ -37,6 +37,7 @@ def initialize_arguments():
     arg_optional.add_argument('-a', '--action', default='plan', nargs="*", help='Available terraform actions; plan, apply, taint, untaint, state, import')
     arg_optional.add_argument('-t', '--target', action='append', help='Specify specific modules for the selected --action')
     arg_optional.add_argument('-r', '--resource', help='ResourceID which is used if doing a state import.')
+    arg_optional.add_argument('-pf', '--plan_file', help='Plan file path.')
     arg_optional.add_argument('-w', '--workspace', default='default', help='Workspace you are targetting.')
     arg_optional.add_argument('-v', '--verbose', action='store_true', help='Show verbose outputs')
 
@@ -80,15 +81,16 @@ def check_for_required_packages():
 
 def get_terraform_variable(file, variable_name):
     """Extracts Terraform variable value from deployment folder."""
-    found_line = ''
-    with open(file, "r") as ofile:
-        for line in [line for line in ofile if variable_name in line]:
-            found_line = line
-            break
+    if os.path.exists(file):
+        found_line = ''
+        with open(file, "r") as ofile:
+            for line in [line for line in ofile if variable_name in line]:
+                found_line = line
+                break
 
-    value = next(iter(re.findall('[^ =][^=]*$', found_line)), None)
-    if value is not None:
-        return value.replace('"', '').strip()
+        value = next(iter(re.findall('[^ =][^=]*$', found_line)), None)
+        if value is not None:
+            return value.replace('"', '').strip()
 
     return None
 
@@ -163,6 +165,8 @@ def initialize_terraform():
     print('\t Secrets: ' + SECRETS_PATH)
     print('\t Section: ' + SECTION_PATH)
     print('\t Deployment: ' + DEPLOYMENT_PATH)
+    if ARGS.plan_file:
+        print('\t Plan File: ' + ARGS.plan_file)
 
     initialize_target_files()
 
@@ -301,10 +305,16 @@ def run_terraform():
         elif REMOTE_STATE_BYPASS:
             command_list.append('-state=' + TF_STATE)
 
-        command_list.append('-var-file=' + VARS_PATH)
+        if ARGS.plan_file and (action_primary in ['apply', 'show'] and os.path.exists(ARGS.plan_file)):
+            command_list.append(ARGS.plan_file)
+        else:
+            command_list.append('-var-file=' + VARS_PATH)
 
-        if os.path.exists(SECRETS_PATH):
-            command_list.append('-var-file=' + SECRETS_PATH)
+            if os.path.exists(SECRETS_PATH):
+                command_list.append('-var-file=' + SECRETS_PATH)
+
+            if ARGS.plan_file and (action_primary in ['plan']):
+                command_list.append('-out=' + ARGS.plan_file)
 
     run_command(command_list, show_output=True)
 
