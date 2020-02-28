@@ -76,6 +76,9 @@ optional packer commands:
 
 #### Common Terraform Commands:
 
+###### validate
+`./deploy.py -d us1 -a validate`
+
 ###### plan
 `./deploy.py -d us1`
 
@@ -105,6 +108,15 @@ optional packer commands:
 
 ###### untaint
 `./deploy.py -d us1 -a untaint -t null_resource.image`
+
+###### plan (plan file out)
+`./deploy.py -d us2 -a plan -pf <path>/<fileName>.plan`
+
+###### show (plan file)
+`./deploy.py -d us2 -a show -pf <path>/<existing fileName>`
+
+###### apply (plan file) Warning when using a plan file with a apply action there is no prompt to approve. 
+`./deploy.py -d us2 -a apply -pf <path>/<existing fileName>`
 
 ##### unlock a remote state file
 If you receive this message you can unlock using the below command. Grab the *ID* under *Lock Info:*
