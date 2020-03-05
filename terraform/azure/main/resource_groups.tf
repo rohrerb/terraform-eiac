@@ -61,6 +61,25 @@ module "rg-network-secondary" {
   enable_delete_lock = false
 }
 
+module "rg-dmz-secondary" {
+  source             = "../modules/resource_group"
+  name_suffix        = "dmz"
+  location           = var.location_secondary
+  full_env_code      = local.full_env_code_secondary
+  create             = var.enable_secondary
+  enable_delete_lock = false
+}
+
+module "rg-packer-secondary" {
+  source             = "../modules/resource_group"
+  name_suffix        = "packer"
+  location           = var.location_secondary
+  full_env_code      = local.full_env_code_secondary
+  create             = var.enable_secondary
+  enable_delete_lock = false
+}
+
+
 module "rg-packer" {
   source             = "../modules/resource_group"
   name_suffix        = "packer"

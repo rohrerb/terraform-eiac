@@ -12,7 +12,6 @@ resource "azurerm_storage_account" "terraform_storage_account" {
   account_tier              = "Standard"
   account_replication_type  = "RAGRS"
   account_kind              = "StorageV2"
-  enable_blob_encryption    = true
   enable_https_traffic_only = true
 
   lifecycle {
