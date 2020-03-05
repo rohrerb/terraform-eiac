@@ -30,7 +30,7 @@ resource "azurerm_lb" "lb" {
 }
 
 resource "azurerm_public_ip" "lb-pip" {
-  count               = (var.is_public ? 1 : 0)
+  count               = (local.enable && var.is_public ? 1 : 0)
   name                = format("%s%s-%s", local.full_env_code, var.name, "lb-pip")
   location            = local.location
   resource_group_name = var.resource_group_name
@@ -39,7 +39,6 @@ resource "azurerm_public_ip" "lb-pip" {
 
   domain_name_label = format("%s%s-%s", local.full_env_code, var.name, "lb-pip")
 }
-
 
 resource "azurerm_lb_backend_address_pool" "backend_address_pool" {
   name                = format("%s-%s", var.name, "pool")

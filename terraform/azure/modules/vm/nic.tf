@@ -16,7 +16,6 @@ resource "azurerm_network_interface" "vm_nic" {
   name                      = format("%s-nic", each.value.full_name)
   location                  = local.location
   resource_group_name       = var.resource_group_name
-  network_security_group_id = var.network_security_group_id
   enable_ip_forwarding      = var.ip_forwarding
 
   # With Public IP
@@ -42,6 +41,13 @@ resource "azurerm_network_interface" "vm_nic" {
       private_ip_address_allocation = "dynamic"
     }
   }
+}
+
+resource "azurerm_network_interface_security_group_association" "vm_nic_nsg_association" {
+  for_each = { for i in local.items : i.key => i }
+
+  network_interface_id      = azurerm_network_interface.vm_nic[each.key].id
+  network_security_group_id = var.network_security_group_id
 }
 
 

@@ -6,7 +6,6 @@ resource "azurerm_storage_account" "diag_storage_account" {
   location                 = local.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
-  enable_blob_encryption   = true
 }
 
 resource "azurerm_advanced_threat_protection" "threat_protection" {
