@@ -20,11 +20,6 @@
       "managed_image_name": "Ubuntu_{{isotime \"2006_01_02_15_04\"}}",
       "managed_image_storage_account_type": "Premium_LRS",
       
-      "private_virtual_network_with_public_ip" : true,
-      "virtual_network_name" : "{{user `virtual_network_name`}}",
-      "virtual_network_subnet_name" : "{{user `virtual_network_subnet_name`}}",
-      "virtual_network_resource_group_name" : "{{user `virtual_network_resource_group_name`}}",
-
       "os_type": "Linux",
       "image_publisher": "Canonical",
       "image_offer": "UbuntuServer",

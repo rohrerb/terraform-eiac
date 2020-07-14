@@ -15,10 +15,9 @@ resource "azurerm_subnet" "subnet" {
   name                 = each.key
   resource_group_name  = module.rg-network.name
   virtual_network_name = azurerm_virtual_network.network.name
-  address_prefix       = format("%s.%s.%s", var.network_octets, each.value.subnet_octet, "0/24")
+  address_prefixes       = [format("%s.%s.%s", var.network_octets, each.value.subnet_octet, "0/24")]
   service_endpoints    = each.value.service_endpoints
 }
-
 
 resource "azurerm_virtual_network" "network_secondary" {
   count = signum(var.enable_secondary ? 1 : 0)
@@ -39,7 +38,7 @@ resource "azurerm_subnet" "subnet_secondary" {
   name                 = each.key
   resource_group_name  = module.rg-network-secondary.name
   virtual_network_name = azurerm_virtual_network.network_secondary.*.name[0]
-  address_prefix       = format("%s.%s.%s", var.network_octets_secondary, each.value.subnet_octet, "0/24")
+  address_prefixes       = [format("%s.%s.%s", var.network_octets_secondary, each.value.subnet_octet, "0/24")]
   service_endpoints    = each.value.service_endpoints
 }
 

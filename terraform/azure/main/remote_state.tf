@@ -15,7 +15,7 @@ resource "azurerm_storage_account" "terraform_storage_account" {
   enable_https_traffic_only = true
 
   lifecycle {
-    prevent_destroy = true
+    #prevent_destroy = true
   }
 }
 

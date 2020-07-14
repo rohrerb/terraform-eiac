@@ -77,6 +77,10 @@ variable "enable_log_analytics" {
   default = false
 }
 
+variable "enable_security_center" {
+  default = false
+}
+
 variable "vm_instance_maps" {
   type = map
 }

@@ -1,1 +1,6 @@
-{"cloud_environment_name":"USGovernment","location":"USGov Virginia","resource_group":"dus1va1-packer","subscription_id":"75406810-f3e6-42fa-97c6-e9027e0a0a45"}
+{
+    "cloud_environment_name": "USGovernment",
+    "location": "USGov Virginia",
+    "resource_group": "dus1gbl-global",
+    "subscription_id": "75406810-f3e6-42fa-97c6-e9027e0a0a45"
+}
